@@ -387,3 +387,38 @@ addEventListener('DOMContentLoaded', entradaDoHero);
     nums.forEach((el) => io.observe(el));
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE MENU TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+{
+  const toggle = document.getElementById('navToggle');
+  const menu   = document.getElementById('mobileMenu');
+
+  if (toggle && menu) {
+    const links = menu.querySelectorAll('.mobile-menu-link, .mobile-menu-cta');
+
+    const open = () => {
+      toggle.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      menu.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      toggle.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('is-open');
+      document.body.style.overflow = '';
+    };
+
+    toggle.addEventListener('click', () => {
+      menu.classList.contains('is-open') ? close() : open();
+    });
+
+    links.forEach(link => link.addEventListener('click', close));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+    });
+  }
+}
