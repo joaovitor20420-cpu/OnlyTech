@@ -210,17 +210,63 @@ function entradaDoHero () {
 
   if (reduced || !window.gsap) {
     document.documentElement.classList.remove('js');
+    const ldr = document.getElementById('loader');
+    if(ldr) ldr.style.display = 'none';
     return;
   }
 
-  gsap.timeline({ defaults: { ease: 'expo.out' } })
-    .fromTo('.title .line > span',
-      { yPercent: 112, y: 0 },
-      { yPercent: 0, y: 0, duration: .55, stagger: .07 }, 0)
-    .to('.eyebrow',              { opacity: 1, y: 0, duration: .8 }, .2)
-    .to('.lede',                 { opacity: 1, y: 0, duration: .8 }, .34)
-    .to('.hero .actions',        { opacity: 1, y: 0, duration: .8 }, .44)
-    .to('.hero-foot',            { opacity: 1, duration: .85 }, .58);
+  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  const ldr = document.getElementById('loader');
+
+  if (ldr) {
+    let dx = 0, dy = 0, sx = 1, sy = 1;
+    tl.fromTo(['.loader-logo-img', '.loader-bar-track'], 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out' }
+      )
+      .to('.loader-bar-fill', { scaleX: 1, duration: 2.2, ease: 'power2.inOut' })
+      .to('.loader-bar-track', { opacity: 0, duration: 0.4 }, "+=0.2")
+      .call(() => {
+        const lImg = document.querySelector('.loader-logo-img');
+        const nImg = document.querySelector('.brand img');
+        if(lImg && nImg) {
+          const r1 = lImg.getBoundingClientRect();
+          const r2 = nImg.getBoundingClientRect();
+          dx = r2.left - r1.left;
+          dy = r2.top - r1.top;
+          sx = r2.width / r1.width;
+          sy = r2.height / r1.height;
+          nImg.style.opacity = '0';
+        }
+      })
+      .to(ldr, { backgroundColor: 'rgba(6,8,10,0)', duration: 1.4, ease: 'expo.inOut' }, "+=0.1")
+      .to('.loader-logo-img', {
+        x: () => dx,
+        y: () => dy,
+        scaleX: () => sx,
+        scaleY: () => sy,
+        transformOrigin: 'top left',
+        duration: 1.4,
+        ease: 'expo.inOut'
+      }, "<")
+      .set('.brand img', { opacity: '' })
+      .set(ldr, { display: 'none' })
+      .fromTo('.title .line > span',
+        { yPercent: 112, y: 0 },
+        { yPercent: 0, y: 0, duration: .55, stagger: .07 }, "-=0.6")
+      .to('.eyebrow',       { opacity: 1, y: 0, duration: .8 }, "-=0.4")
+      .to('.lede',          { opacity: 1, y: 0, duration: .8 }, "-=0.7")
+      .to('.hero .actions', { opacity: 1, y: 0, duration: .8 }, "-=0.7")
+      .to('.hero-foot',     { opacity: 1, duration: .85 }, "-=0.7");
+  } else {
+    tl.fromTo('.title .line > span',
+        { yPercent: 112, y: 0 },
+        { yPercent: 0, y: 0, duration: .55, stagger: .07 }, 0)
+      .to('.eyebrow',       { opacity: 1, y: 0, duration: .8 }, .2)
+      .to('.lede',          { opacity: 1, y: 0, duration: .8 }, .34)
+      .to('.hero .actions', { opacity: 1, y: 0, duration: .8 }, .44)
+      .to('.hero-foot',     { opacity: 1, duration: .85 }, .58);
+  }
 
   /* -- Revelação no scroll -- */
   if (window.ScrollTrigger) {
