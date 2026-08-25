@@ -91,17 +91,20 @@ canvas{ display:block }
 
 /* ========== NAV ========== */
 .nav{
-  position:fixed; inset:0 0 auto 0; z-index:60;
+  position:fixed; top:24px; left:50%; translate:-50% 0; z-index:60;
+  width:calc(100% - 48px); max-width:1380px;
   display:flex; align-items:center; justify-content:space-between; gap:24px;
-  padding:18px var(--pad);
-  transition:background .5s var(--ease), border-color .5s var(--ease), padding .5s var(--ease);
-  border-bottom:1px solid transparent;
+  padding:12px 14px 12px 24px;
+  border-radius:99px;
+  background:rgba(6,8,10,.4);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);
+  transition:background .5s var(--ease), border-color .5s var(--ease), top .5s var(--ease);
 }
 .nav.is-stuck{
-  background:rgba(6,8,10,.78);
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  border-bottom-color:var(--line);
-  padding-top:13px; padding-bottom:13px;
+  top:16px;
+  background:rgba(6,8,10,.82);
+  border-color:rgba(232,239,240,.12);
 }
 
 .brand{ display:flex; align-items:center; flex-shrink:0 }
