@@ -128,6 +128,46 @@ canvas{ display:block }
   overflow:hidden;
   isolation:isolate;
 }
+.hero::after{
+  content:'';
+  position:absolute;
+  top:0; right:0; bottom:0;
+  width:120px;
+  z-index:10;
+  pointer-events:none;
+  background:linear-gradient(to right, transparent, var(--bg));
+}
+
+.hero-mockup{
+  position:absolute;
+  right:-5vw;
+  top:5%;
+  transform:translateY(-48%);
+  width:clamp(800px, 80vw, 1250px);
+  height:auto;
+  z-index:5;
+  pointer-events:none;
+  object-fit:contain;
+  filter:
+    drop-shadow(0 0 100px rgba(0,0,0,.7))
+    drop-shadow(0 0 200px rgba(6,8,10,.9))
+    drop-shadow(0 30px 80px rgba(0,0,0,.6));
+
+  animation:mockupFloat 6s var(--ease) infinite;
+}
+@keyframes mockupFloat{
+  0%,100%{ transform:translateY(0) }
+  50%{ transform:translateY(-12px) }
+}
+@media (max-width:1024px){
+  .hero-mockup{
+    position:relative;
+    right:auto; top:auto; translate:none;
+    width:min(90%, 520px);
+    margin:40px auto 0;
+    display:block;
+  }
+}
 
 .hero-aura{
   position:absolute; inset:0; z-index:-4; pointer-events:none;
