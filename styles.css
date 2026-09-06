@@ -763,9 +763,9 @@ canvas{ display:block }
 }
 
 /* ══════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE (max 620px)
+   RESPONSIVE — MOBILE (max 720px)
    ══════════════════════════════════════════════════════ */
-@media (max-width:620px){
+@media (max-width:720px){
   :root{ --pad: 18px }
 
   .nav{
@@ -776,9 +776,9 @@ canvas{ display:block }
   .brand img{ height:22px }
 
   .hero{
-    height: 100svh;
-    min-height: auto;
-    padding: 80px var(--pad) 0;
+    height: auto;
+    min-height: 100svh;
+    padding: 90px var(--pad) 60px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
