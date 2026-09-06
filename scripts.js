@@ -154,12 +154,98 @@ function entradaDoHero () {
   if (window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    ScrollTrigger.batch('[data-reveal]', {
-      start: 'top 88%',
-      once: true,
-      onEnter: (els) => gsap.to(els, {
-        opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .07, overwrite: true
-      }),
+    /* -- Animações Específicas por Seção (Taste Skill & Mobile) -- */
+    const isMobile = window.matchMedia('(max-width: 620px)').matches;
+
+    // 1. Elementos gerais
+    gsap.utils.toArray('[data-reveal]').forEach(el => {
+      if (el.classList.contains('case') || el.classList.contains('service')) return; // Tratados abaixo
+      
+      let animProps = { opacity: 1, y: 0, scale: 1, x: 0, visibility: 'visible', duration: 1.2, ease: 'expo.out' };
+      let fromProps = { opacity: 0, visibility: 'hidden' };
+      let startPoint = 'top 85%';
+      
+      if (el.classList.contains('sec-head') || el.classList.contains('cta-title')) {
+        fromProps.y = 30;
+      } else if (el.classList.contains('quote') || el.classList.contains('step')) {
+        fromProps.y = 20;
+        animProps.duration = 1;
+      } else if (el.classList.contains('stack-grid')) {
+        gsap.set(el, { visibility: 'visible', opacity: 1 });
+        gsap.fromTo(el.querySelectorAll('.chip'),
+          { opacity: 0, scale: 0.85, y: 10 },
+          {
+            opacity: 1, scale: 1, y: 0, visibility: 'visible',
+            duration: 0.6, ease: 'back.out(1.5)', stagger: 0.05,
+            scrollTrigger: { trigger: el, start: startPoint, once: true }
+          }
+        );
+        return; 
+      } else if (el.classList.contains('stats')) {
+        gsap.set(el, { visibility: 'visible', opacity: 1 });
+        gsap.fromTo(el.querySelectorAll('.stat'),
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1, y: 0, visibility: 'visible',
+            duration: 1, ease: 'power2.out', stagger: 0.1,
+            scrollTrigger: { trigger: el, start: startPoint, once: true }
+          }
+        );
+        return;
+      } else {
+        fromProps.y = 20;
+      }
+
+      gsap.fromTo(el, fromProps, {
+        ...animProps,
+        scrollTrigger: { trigger: el, start: startPoint, once: true }
+      });
+    });
+
+    // 2. Serviços: Animação Lateral + Cima para Baixo
+    gsap.utils.toArray('.service').forEach((svc, i) => {
+      gsap.fromTo(svc, 
+        { opacity: 0, x: isMobile ? 0 : (i % 2 === 0 ? -40 : 40), y: 30, visibility: 'hidden' }, 
+        {
+          opacity: 1, x: 0, y: 0, visibility: 'visible',
+          duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: svc, start: 'top 85%', once: true }
+        }
+      );
+    });
+
+    // 3. Cases de Trabalho: Diagonal + Transição de Imagens (Cortina/Clip-Path)
+    gsap.utils.toArray('.case').forEach((c, i) => {
+      const img = c.querySelector('.case-shot img');
+      const bodyChildren = c.querySelectorAll('.case-body > *');
+      
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: c, start: 'top 80%', once: true }
+      });
+      
+      // Card revela em diagonal (lateral e de baixo pra cima)
+      tl.fromTo(c, 
+        { opacity: 0, y: 60, x: isMobile ? 0 : (c.classList.contains('case--wide') ? -40 : 40), visibility: 'hidden' },
+        { opacity: 1, y: 0, x: 0, visibility: 'visible', duration: 1, ease: 'power3.out' }
+      );
+      
+      // Imagem faz uma transição reveladora suave
+      if (img) {
+        tl.fromTo(img, 
+          { clipPath: 'inset(100% 0 0 0)', scale: 1.15 },
+          { clipPath: 'inset(0% 0 0 0)', scale: 1, duration: 1.2, ease: 'expo.out' },
+          "-=0.7" // Intercala com a animação do card
+        );
+      }
+      
+      // Conteúdo do case aparece depois
+      if (bodyChildren.length) {
+        tl.fromTo(bodyChildren, 
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1 },
+          "-=1.1"
+        );
+      }
     });
 
     /* -- Trilho do processo: parallax scrub -- */
