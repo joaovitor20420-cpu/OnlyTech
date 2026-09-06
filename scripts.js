@@ -11,7 +11,7 @@ function initField () {
   const context = canvas.getContext('2d');
   
   // Total de frames gerados pelo ffmpeg
-  const frameCount = 192;
+  const frameCount = 240;
   const currentFrame = index => (
     `images/frames/frame_${(index + 1).toString().padStart(4, '0')}.jpg`
   );
