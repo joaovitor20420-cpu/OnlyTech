@@ -694,9 +694,37 @@ canvas{ display:block }
   .brand img{ height:22px }
 
   .hero{
-    min-height:auto;
-    padding-top:100px;
-    padding-bottom:60px;
+    height: 100svh;
+    min-height: auto;
+    padding: 80px var(--pad) 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  #hero-sequence {
+    position: relative;
+    width: 100vw;
+    flex: 0 0 40vh;
+    margin-left: calc(-1 * var(--pad));
+    object-fit: cover;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(to bottom, #000 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 75%, transparent 100%);
+  }
+
+  .hero-inner {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 0 40px;
+    z-index: 1;
+  }
+
+  .hero-veil, .hero-grid, .hero-aura {
+    display: none;
   }
 
   .title{

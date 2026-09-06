@@ -61,13 +61,18 @@ function initField () {
       duration: 1,
       onUpdate: render
     }, 0)
-    // Esconde os textos e o mockup logo no início do scroll (duração 0.2 = primeiros 20% do scroll)
-    .to(".hero-inner, .hero-mockup, .hero-foot", {
-      opacity: 0,
-      y: -40,
-      ease: "power2.inOut",
-      duration: 0.2
-    }, 0);
+    // Esconde os textos e o mockup logo no início do scroll, APENAS no desktop
+    // No mobile, o texto fica fixo abaixo do vídeo, então não precisamos esconder
+    const mm = gsap.matchMedia();
+    
+    mm.add("(min-width: 621px)", () => {
+      tl.to(".hero-inner, .hero-mockup, .hero-foot", {
+        opacity: 0,
+        y: -40,
+        ease: "power2.inOut",
+        duration: 0.2
+      }, 0);
+    });
   }
 
   canvas.classList.add('is-ready');
