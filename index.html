@@ -52,8 +52,9 @@
     <a href="#stack">Stack</a>
   </div>
 
-  <a class="nav-cta" href="https://api.whatsapp.com/send/?phone=5500000000000&text=Ol%C3%A1%21+Vi+o+site+da+Only+Tech+e+gostaria+de+um+or%C3%A7amento" target="_blank" rel="noopener">
-    Falar no WhatsApp
+  <a class="nav-cta" href="https://api.whatsapp.com/send/?phone=5500000000000&text=Ol%C3%A1%21+Vi+o+site+da+Only+Tech+e+gostaria+de+um+or%C3%A7amento" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+    <span>Falar no WhatsApp</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg>
   </a>
 
   <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
@@ -79,7 +80,7 @@
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero" id="topo">
   <div class="hero-aura" aria-hidden="true"></div>
-  <canvas id="gl" aria-hidden="true"></canvas>
+  <canvas id="hero-sequence" aria-hidden="true"></canvas>
   <div class="hero-grid" aria-hidden="true"></div>
   <div class="hero-veil" aria-hidden="true"></div>
 
@@ -393,6 +394,9 @@
         Falar no WhatsApp
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg>
       </a>
+      <p class="trust-signal mono" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:text-bottom; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tempo médio de resposta: ~5 minutos
+      </p>
     </div>
   </div>
 </section>
@@ -439,9 +443,7 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
-</script>
+
 
 <script type="module" src="scripts.js"></script>
 

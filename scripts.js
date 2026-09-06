@@ -1,197 +1,74 @@
 /* ══════════════════════════════════════════════════════════════
-   HERO - campo de particulas em malha (neon green)
-   Grid regular de pontos, ondulado por soma de senos no vertex
-   shader, com repulsão suave sob o cursor. Um só draw call.
+   HERO - Image sequence animation (GSAP + ScrollTrigger)
    ══════════════════════════════════════════════════════════════ */
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const canvas  = document.getElementById('gl');
+const canvas  = document.getElementById('hero-sequence');
 
-async function initField () {
-  const cores = navigator.hardwareConcurrency || 4;
-  const mem   = navigator.deviceMemory || 4;
-  if (cores <= 2 || mem <= 1) return;
+function initField () {
+  if (reduced || !canvas) return;
 
-  let THREE;
-  try { THREE = await import('three'); }
-  catch { return; }
+  const context = canvas.getContext('2d');
+  
+  // Total de frames gerados pelo ffmpeg
+  const frameCount = 192;
+  const currentFrame = index => (
+    `images/frames/frame_${(index + 1).toString().padStart(4, '0')}.jpg`
+  );
 
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({
-      canvas, antialias:false, alpha:true, powerPreference:'high-performance'
+  const images = [];
+  const seq = { frame: 0 };
+
+  for (let i = 0; i < frameCount; i++) {
+    const img = new Image();
+    img.src = currentFrame(i);
+    images.push(img);
+  }
+
+  // Ajusta resolução base do Canvas. 
+  // O redimensionamento flexível e corte são feitos pelo CSS object-fit:cover
+  canvas.width = 1920;
+  canvas.height = 1080;
+
+  function render() {
+    if(images[seq.frame] && images[seq.frame].complete) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(images[seq.frame], 0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  images[0].onload = render;
+
+  // Garante que o GSAP faça a animação no scroll
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "+=150%", 
+        pin: true,
+        scrub: 0.5, 
+      }
     });
-  } catch { return; }
 
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
-  camera.position.set(0, -3.5, 46);
-  camera.lookAt(0, 1.5, 0);
-
-  renderer.setClearColor(0x000000, 0);
-
-  /* ---- malha de pontos ---- */
-  const narrow = innerWidth < 760;
-  const COLS = narrow ? 104 : 176;
-  const ROWS = narrow ?  62 : 100;
-  const SPAN_X = 104, SPAN_Y = 60;
-
-  const count = COLS * ROWS;
-  const pos  = new Float32Array(count * 3);
-  const rand = new Float32Array(count);
-
-  let i = 0;
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      const jx = (Math.random() - 0.5) * (SPAN_X / COLS) * 0.55;
-      const jy = (Math.random() - 0.5) * (SPAN_Y / ROWS) * 0.55;
-      pos[i * 3]     = (x / (COLS - 1) - 0.5) * SPAN_X + jx;
-      pos[i * 3 + 1] = (y / (ROWS - 1) - 0.5) * SPAN_Y + jy;
-      pos[i * 3 + 2] = 0;
-      rand[i] = Math.random();
-      i++;
-    }
+    // Animação dos frames do vídeo (duração total = 1)
+    tl.to(seq, {
+      frame: frameCount - 1,
+      snap: "frame",
+      ease: "none",
+      duration: 1,
+      onUpdate: render
+    }, 0)
+    // Esconde os textos e o mockup logo no início do scroll (duração 0.2 = primeiros 20% do scroll)
+    .to(".hero-inner, .hero-mockup, .hero-foot", {
+      opacity: 0,
+      y: -40,
+      ease: "power2.inOut",
+      duration: 0.2
+    }, 0);
   }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('aRand',    new THREE.BufferAttribute(rand, 1));
-
-  const uniforms = {
-    uTime:     { value: 0 },
-    uMouse:    { value: new THREE.Vector2(999, 999) },
-    uPointer:  { value: 0 },
-    uSize:     { value: narrow ? 2.0 : 2.35 },
-    uDpr:      { value: 1 },
-    uColor:    { value: new THREE.Color(0x00ff88) },   /* neon green */
-    uHi:       { value: new THREE.Color(0x33ffaa) },   /* accent-2 */
-  };
-
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    transparent: true,
-    depthWrite:  false,
-    blending:    THREE.AdditiveBlending,
-    vertexShader: /* glsl */`
-      uniform float uTime, uSize, uDpr, uPointer;
-      uniform vec2  uMouse;
-      attribute float aRand;
-      varying float vGlow, vFade;
-
-      void main () {
-        vec3 p = position;
-
-        float w  = sin(p.x * 0.168 + uTime * 0.40) * cos(p.y * 0.205 - uTime * 0.29);
-        w += 0.42 * sin(p.x * 0.355 - uTime * 0.25) * cos(p.y * 0.31 + uTime * 0.19);
-        p.z += w * 2.6;
-
-        vec2  d    = p.xy - uMouse;
-        float dist = length(d);
-        float infl = exp(-dist * dist / 150.0) * uPointer;
-        p.xy += normalize(d + 0.0001) * infl * 5.5;
-        p.z  += infl * 7.0;
-
-        float r = length(position.xy / vec2(52.0, 30.0));
-        vFade = 1.0 - smoothstep(0.55, 1.0, r);
-
-        float lift = 0.34 + 0.66 * smoothstep(-2.8, 3.2, p.z);
-        vGlow = lift * (0.62 + 0.38 * aRand) + infl * 1.3;
-
-        vec4 mv = modelViewMatrix * vec4(p, 1.0);
-        gl_Position  = projectionMatrix * mv;
-        gl_PointSize = uSize * uDpr * (0.75 + vGlow * 1.1) * (46.0 / -mv.z);
-      }
-    `,
-    fragmentShader: /* glsl */`
-      uniform vec3 uColor, uHi;
-      varying float vGlow, vFade;
-
-      void main () {
-        vec2  c = gl_PointCoord - 0.5;
-        float d = length(c);
-        if (d > 0.5) discard;
-
-        float a = pow(smoothstep(0.5, 0.0, d), 1.9);
-        vec3  col = mix(uColor, uHi, clamp(vGlow * 0.85, 0.0, 1.0));
-
-        gl_FragColor = vec4(col, a * vFade * (0.10 + vGlow * 0.46));
-      }
-    `,
-  });
-
-  const field = new THREE.Points(geo, material);
-  field.rotation.x = -0.42;
-  scene.add(field);
-
-  /* ---- redimensionamento ---- */
-  const resize = () => {
-    const w = canvas.clientWidth  || innerWidth;
-    const h = canvas.clientHeight || innerHeight;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(w, h, false);
-    uniforms.uDpr.value = dpr;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  };
-  resize();
-  addEventListener('resize', resize, { passive: true });
-
-  /* ---- cursor ---- */
-  const plane   = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const ray     = new THREE.Raycaster();
-  const ndc     = new THREE.Vector2();
-  const hit     = new THREE.Vector3();
-  const target  = new THREE.Vector2(999, 999);
-  let   wanted  = 0;
-
-  const onMove = (e) => {
-    const r = canvas.getBoundingClientRect();
-    ndc.x =  ((e.clientX - r.left) / r.width)  * 2 - 1;
-    ndc.y = -((e.clientY - r.top)  / r.height) * 2 + 1;
-    ray.setFromCamera(ndc, camera);
-    if (ray.ray.intersectPlane(plane, hit)) {
-      field.worldToLocal(hit);
-      target.set(hit.x, hit.y);
-      wanted = 1;
-    }
-  };
-  if (!reduced && matchMedia('(hover:hover) and (pointer:fine)').matches) {
-    addEventListener('pointermove', onMove, { passive: true });
-    addEventListener('pointerleave', () => { wanted = 0; }, { passive: true });
-  }
-
-  /* ---- loop ---- */
-  let running = true, raf = 0, t0 = performance.now();
-
-  const frame = (now) => {
-    raf = requestAnimationFrame(frame);
-    if (!running) return;
-
-    uniforms.uTime.value = (now - t0) / 1000;
-
-    const m = uniforms.uMouse.value;
-    m.x += (target.x - m.x) * 0.07;
-    m.y += (target.y - m.y) * 0.07;
-    uniforms.uPointer.value += (wanted - uniforms.uPointer.value) * 0.06;
-
-    renderer.render(scene, camera);
-  };
-
-  if (reduced) {
-    renderer.render(scene, camera);
-  } else {
-    raf = requestAnimationFrame(frame);
-  }
-
-  const hero = document.getElementById('topo');
-  new IntersectionObserver(
-    ([e]) => { running = e.isIntersecting && !document.hidden; },
-    { threshold: 0 }
-  ).observe(hero);
-  document.addEventListener('visibilitychange', () => {
-    running = !document.hidden && hero.getBoundingClientRect().bottom > 0;
-  });
 
   canvas.classList.add('is-ready');
 }
