@@ -193,15 +193,7 @@ canvas{ display:block }
 }
 #hero-sequence.is-ready{ opacity:1 }
 
-.hero-grid{
-  position:absolute; inset:0; z-index:-2; pointer-events:none;
-  background-image:
-    linear-gradient(to right, rgba(232,239,240,.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(232,239,240,.04) 1px, transparent 1px);
-  background-size:clamp(56px,7vw,92px) clamp(56px,7vw,92px);
-  -webkit-mask-image:radial-gradient(78% 62% at 50% 45%, #000 8%, transparent 78%);
-          mask-image:radial-gradient(78% 62% at 50% 45%, #000 8%, transparent 78%);
-}
+
 
 .hero-veil{
   position:absolute; inset:0; z-index:-1; pointer-events:none;
