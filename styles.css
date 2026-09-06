@@ -760,12 +760,24 @@ canvas{ display:block }
     font-size:clamp(2.4rem, 8vw, 4.5rem);
   }
   .lede{ max-width:100% }
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — TABLET (max 1024px)
+   ══════════════════════════════════════════════════════ */
+@media (max-width:1024px){
+  .nav { gap: 16px; padding: 12px 16px; }
+  .nav-links { gap: 16px; }
+  .nav-links a { font-size: 13.5px; }
+  .nav-cta { padding: 10px 18px; font-size: 13.5px; }
+  
+  .manifesto-grid { gap: 40px; }
+  .stats { gap: 24px; }
+  .services { padding-left: 0; }
 }
 
 /* ══════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE (max 720px)
+   RESPONSIVE — MOBILE (max 768px)
    ══════════════════════════════════════════════════════ */
-@media (max-width:720px){
+@media (max-width:768px){
   :root{ --pad: 18px }
 
   .nav{
@@ -859,3 +871,4 @@ canvas{ display:block }
   .footer-bot{ flex-direction:column; gap:8px; text-align:center }
 }
 
+}

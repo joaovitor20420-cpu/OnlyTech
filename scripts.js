@@ -155,7 +155,7 @@ function entradaDoHero () {
     gsap.registerPlugin(ScrollTrigger);
 
     /* -- Animações Específicas por Seção (Taste Skill & Mobile) -- */
-    const isMobile = window.matchMedia('(max-width: 620px)').matches;
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     // 1. Elementos gerais
     gsap.utils.toArray('[data-reveal]').forEach(el => {
