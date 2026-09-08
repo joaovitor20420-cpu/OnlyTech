@@ -359,8 +359,34 @@ canvas{ display:block }
   border:1px solid var(--line); border-radius:18px;
   padding:clamp(24px, 3vw, 36px);
   background:var(--bg-2);
+  overflow:hidden;
   transition:border-color .55s var(--ease), background .55s var(--ease), transform .45s var(--ease), box-shadow .55s var(--ease);
 }
+
+.service::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+    rgba(0, 255, 136, 0.06),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.service:hover::before {
+  opacity: 1;
+}
+
+.service > * {
+  position: relative;
+  z-index: 1;
+}
+
 .service:hover, .service:focus-visible{
   border-color:rgba(0,255,136,.28); 
   background:var(--bg-3); 
