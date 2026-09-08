@@ -644,6 +644,36 @@ canvas{ display:block }
 }
 
 /* ══════════════════════════════════════════════════════
+   FAQ
+   ══════════════════════════════════════════════════════ */
+.faq-list{ max-width:800px; display:flex; flex-direction:column; gap:16px; margin:0 auto; margin-top: 40px; }
+.faq-item{
+  border:1px solid var(--line); border-radius:16px; background:var(--bg-2);
+  overflow:hidden; transition:border-color .4s var(--ease), background .4s var(--ease);
+}
+.faq-item:hover{ border-color:rgba(0,255,136,.2); background:var(--bg-3); }
+.faq-question{
+  width:100%; text-align:left; display:flex; align-items:center; justify-content:space-between;
+  padding:clamp(20px, 3vw, 28px); font-family:var(--sans); font-weight:500;
+  font-size:clamp(1.1rem, 2vw, 1.25rem); color:var(--ink);
+  cursor:pointer; background:transparent; border:none; outline:none;
+}
+.faq-question svg{
+  width:20px; height:20px; color:var(--ink-3); flex-shrink:0;
+  transition:transform .4s var(--ease), color .4s var(--ease);
+}
+.faq-item.is-open .faq-question svg{ transform:rotate(180deg); color:var(--accent); }
+.faq-answer{
+  max-height:0; overflow:hidden;
+  transition:max-height .5s var(--ease);
+}
+.faq-answer p{
+  padding:0 clamp(20px, 3vw, 28px) clamp(24px, 3vw, 32px);
+  color:var(--ink-2); font-size:15.5px; line-height:1.68; margin:0;
+}
+
+/* ══════════════════════════════════════════════════════
+
    8 - CTA
    ══════════════════════════════════════════════════════ */
 .cta{ position:relative; text-align:center; overflow:hidden }
