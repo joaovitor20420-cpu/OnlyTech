@@ -596,24 +596,6 @@ canvas{ display:block }
 .chip span{ font-size:14px; color:var(--ink-2) }
 .chip:hover span{ color:var(--ink) }
 
-@media (max-width:620px) {
-  .stack-grid {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding-bottom: 16px;
-    margin-right: calc(var(--pad) * -1);
-    padding-right: var(--pad);
-    scrollbar-width: none;
-  }
-  .stack-grid::-webkit-scrollbar { display: none; }
-  .chip {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-  }
-}
 
 /* ══════════════════════════════════════════════════════
    7 - DEPOIMENTOS
