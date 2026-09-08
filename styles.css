@@ -689,6 +689,9 @@ canvas{ display:block }
   display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between;
   margin-top:clamp(40px,6vw,64px); padding-top:24px; border-top:1px solid var(--line);
 }
+.footer-legal{ display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
+.footer-legal a{ color:var(--ink-3); transition:color .3s var(--ease); }
+.footer-legal a:hover{ color:var(--accent); }
 
 /* ══════════════════════════════════════════════════════
    REVELACAO GSAP INICIAL
